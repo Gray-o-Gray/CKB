@@ -1,3 +1,44 @@
+# iptables常用命令集合
+```bash
+# 查看iptables规则
+iptables -nvL
+
+# 创建自定义链
+iptables -t filter -N test_chain
+
+# 添加规则
+iptables -t filter -A test_chain -s 127.0.0.1 -p tcp -j ACCEPT
+
+# 插入规则
+iptables -t filter -I test_chain -s 127.0.0.1 -p udp -j ACCEPT
+iptables -t filter -I test_chain 5 -s 127.0.0.1 -p udp -j ACCEPT
+
+# 删除规则
+iptables -t filter -nvL test_chain --line-numbers # 列出指定链中的所有规则，并显示规则的序号。
+iptables -t filter -D test_chain rule_numbers # 根据规则的序号进行删除
+iptables -t filter -D test_chain -s 127.0.0.1 -s tcp -j ACCEPT # 通过规则的具体内容进行删除，如果有重复的相同规则，一次仅删除一条。
+# 若无对应规则，则返回无匹配规则的提示
+
+# target使用自定义链
+iptables -t filter -N test_target # 创建一个自定义链
+iptables -t filter -I test_chain -j test_target
+
+# 清空指定链
+iptables -F test_chain
+
+# 清空所有链
+iptables -F 
+
+# 修改默认链的默认策略
+iptables -t filter -P INPUT DROP
+iptables -t filter -P FORWARD REJECT
+
+# 删除自定链（链中不能有规则，链不可以被其他链使用）
+iptables -X test_chain
+
+```
+
+
 # iptables 命令的基本构成
 iptables [-t TABLE] [COMMAND] [OPTION]
 
@@ -44,9 +85,23 @@ TABLE 默认为filter，可选{raw nat mangle filter}
   
   删除指定的用户自定义链。
     - 删除条件：
-    - 
-- -P, --policy chain target
-- -E, --rename-chain old-chain new-chain
-- -h
+    - 1. 当前链不可被引用，若被引用，则必须先删除或替换引用规则。
+    - 2. 当前链必须为空，即不包含任何规则。
 
+    如果未指定链[chain]，该命令将尝试删除表中所有的非内置链（用户自定义链）
+
+- -P, --policy chain target
+  将链的默认策略修改为指定target。关于[target](#target)的具体信息请点击。
+  
+  注意：只有内置链具有默认策略，且内置链与用户自定义链均不可作为target。
+
+- -E, --rename-chain old-chain new-chain
+  
+  将用户指定的链重命名为用户提供的名称。该操作仅为装饰性的，对表的结构没有影响。
+
+- -h
+  帮助文档
+
+
+## TARGET
 
