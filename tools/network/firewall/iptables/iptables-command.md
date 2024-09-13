@@ -38,6 +38,22 @@ iptables -X test_chain
 
 ```
 
+## iptables -nvL 各栏含义
+![](.pic/2024-09-12-10-36-57.png)
+
+| 字段  | 含义  |
+| :---: | :---: |
+| pkts |  匹配的数据包个数  |
+| bytes | 匹配的数据包大小  |
+| target  | 目标（动作）  |
+| prot  | 协议  |
+| opt | 数据包的选项，基本都为默认的“--”  |
+| in  | 数据包进入的网络接口  |
+| out | 数据包离开的网络接口  |
+| source  | 源地址  |
+| destination | 目的地址  |
+|     | 其他模块和扩展配置，例如指定端口等 |
+
 
 # iptables 命令的基本构成
 iptables [-t TABLE] [COMMAND] [OPTION]
@@ -103,5 +119,8 @@ TABLE 默认为filter，可选{raw nat mangle filter}
   帮助文档
 
 
+
+
 ## TARGET
+  防火墙规则指定数据包的标准和目标。如果数据包不匹配，则检查链中的下一条规则；如果匹配，则下一个规则由TARGET（目标值）指定，TARGET可以是用户自定义链的名称，也可以是特殊值（ACCEPT、DROP、QUEUE、RETURN等）之一。
 
