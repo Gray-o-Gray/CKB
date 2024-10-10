@@ -535,56 +535,113 @@ Specify the path to the control socket used for connection sharing as described 
 
 When used in conjunction with ControlMaster, specifies that the master connection should remain open in the background (waiting for future client connections) after the initial client connection has been closed. If set to no (the default), then the master connection will not be placed into the background, and will close as soon as the initial client connection is closed. If set to yes or 0, then the master connection will remain in the background indefinitely (until killed or closed via a mechanism such as the "ssh -O exit"). If set to a time in seconds, or a time in any of the formats documented in sshd_config(5), then the backgrounded master connection will automatically terminate after it has remained idle (with no client connections) for the specified time.
 
-与ControlMaster一起使用时，指定主连接在初始客户端连接关闭后应在后台保持开启，以等待未来的客户端连接。如果设置为no（默认），则主连接不会进入后台，并将在初始客户端连接关闭后立即关闭。如果设置为yes或0，则主连接将无限期保持在后台（直到被终止或通过如“ssh -O exit”机制关闭）。如果设置为以秒为单位的时间，或sshd_config(5)中记录的格式之一，则后台主连接在空闲达到指定时间后会自动终止（无客户端连接）。
+与ControlMaster一起使用时，指定主连接在初始客户端连接关闭后应在后台保持开启，以等待未来的客户端连接。如果设置为no（默认），则主连接不会进入后台，并将在初始客户端连接关闭后立即关闭。如果设置为yes或0，则主连接将无限期保持在后台（直到被终止或通过如“ssh -O exit”机制关闭）。如果设置为以秒为单位的时间，或sshd_config中记录的格式之一，则后台主连接在空闲达到指定时间后会自动终止（无客户端连接）。
 
 ### DynamicForward
 
 Specifies that a TCP port on the local machine be forwarded over the secure channel, and the application protocol is then used to determine where to connect to from the remote machine.
+
+指定本地机器的TCP端口通过安全通道转发，然后使用应用协议决定从远程机器连接的位置。
+
 The argument must be [bind_address:]port. IPv6 addresses can be specified by enclosing addresses in square brackets. By default, the local port is bound in accordance with the GatewayPorts setting. However, an explicit bind_address may be used to bind the connection to a specific address. The bind_address of localhost indicates that the listening port be bound for local use only, while an empty address or ‘*’ indicates that the port should be available from all interfaces.
 
+参数必须是[bind_address:]port。IPv6地址可以通过方括号括起来指定。默认情况下，本地端口根据GatewayPorts设置绑定。但是，可以使用明确的bind_address将连接绑定到特定地址。localhost的bind_address表示监听端口仅供本地使用，而空地址或‘*’表示端口应可从所有接口访问。
+
 Currently the SOCKS4 and SOCKS5 protocols are supported, and ssh(1) will act as a SOCKS server. Multiple forwardings may be specified, and additional forwardings can be given on the command line. Only the superuser can forward privileged ports.
+
+当前支持SOCKS4和SOCKS5协议，ssh(1)会作为一个SOCKS服务器。可以指定多个转发，并可以在命令行中提供其他转发。只有超级用户可以转发特权端口。
 
 ### EnableEscapeCommandline
 
 Enables the command line option in the EscapeChar menu for interactive sessions (default ‘~C’). By default, the command line is disabled.
 
+在EscapeChar菜单中启用命令行选项用于交互会话（默认是‘~C’）。默认情况下，命令行是禁用的。
+
+**示例：SSH会话中的EscapeChar命令行**
+
+假设你正在使用SSH连接远程服务器，并且需要在会话中启用命令行选项。
+
+1. **默认设置**  
+   默认情况下，命令行选项是禁用的。
+
+2. **启用选项**  
+   通过设置EscapeChar为`~C`，可以启用命令行选项。
+
+3. **使用示例**  
+   - 连接到服务器：  
+     ```bash
+     ssh user@server.com
+     ```
+   - 在会话中按下`~C`：  
+     这将调用命令行，让你可以执行一些特殊命令，如端口转发或重新连接。
+
+4. **退出命令行**  
+   执行完需要的操作后，返回到普通会话中继续使用SSH。
+
+通过这种方式，你可以在不中断SSH连接的情况下完成其他任务。
+
 ### EnableSSHKeysign
 
 Setting this option to yes in the global client configuration file /etc/ssh/ssh_config enables the use of the helper program ssh-keysign(8) during HostbasedAuthentication. The argument must be yes or no (the default). This option should be placed in the non-hostspecific section. See ssh-keysign(8) for more information.
+
+在全局客户端配置文件 /etc/ssh/ssh_config 中，将此选项设置为 yes，可以在 HostbasedAuthentication 中使用辅助程序 ssh-keysign(8)。参数必须为 yes 或 no（默认）。此选项应放在非主机特定部分。详细信息请参阅 ssh-keysign(8)。
 
 ### EscapeChar
 
 Sets the escape character (default: ‘~’). The escape character can also be set on the command line. The argument should be a single character, ‘^’ followed by a letter, or none to disable the escape character entirely (making the connection transparent for binary data).
 
+设置转义字符（默认值：‘~’）。转义字符也可以在命令行中设置。参数应为单个字符，可以是‘^’后跟一个字母，或者不设置以完全禁用转义字符（使连接对二进制数据透明）。
+
 ### ExitOnForwardFailure
 
 Specifies whether ssh(1) should terminate the connection if it cannot set up all requested dynamic, tunnel, local, and remote port forwardings, (e.g. if either end is unable to bind and listen on a specified port). Note that ExitOnForwardFailure does not apply to connections made over port forwardings and will not, for example, cause ssh(1) to exit if TCP connections to the ultimate forwarding destination fail. The argument must be yes or no (the default).
+
+指定当无法设置所有请求的动态、隧道、本地和远程端口转发时，ssh(1)是否应终止连接（例如，如果任一端无法在指定端口绑定和监听）。请注意，ExitOnForwardFailure不适用于通过端口转发建立的连接，不会因为到最终转发目标的TCP连接失败而导致ssh(1)退出。参数必须是yes或no（默认）。
 
 ### FingerprintHash
 
 Specifies the hash algorithm used when displaying key fingerprints. Valid options are: md5 and sha256 (the default).
 
+指定用于显示密钥指纹的哈希算法。有效选项有：md5 和 sha256（默认）。
+
 ### ForkAfterAuthentication
 
 Requests ssh to go to background just before command execution. This is useful if ssh is going to ask for passwords or passphrases, but the user wants it in the background. This implies the StdinNull configuration option being set to “yes”. The recommended way to start X11 programs at a remote site is with something like ssh -f host xterm, which is the same as ssh host xterm if the ForkAfterAuthentication configuration option is set to “yes”.
 
+请求在命令执行前让SSH进入后台。这在SSH需要输入密码或口令但用户希望其在后台运行时很有用。这意味着StdinNull配置选项设置为“yes”。推荐的方式是在远程启动X11程序时使用类似ssh -f host xterm的命令，如果ForkAfterAuthentication配置选项设为“yes”，这就等同于ssh host xterm。
+
 If the ExitOnForwardFailure configuration option is set to “yes”, then a client started with the ForkAfterAuthentication configuration option being set to “yes” will wait for all remote port forwards to be successfully established before placing itself in the background. The argument to this keyword must be yes (same as the -f option) or no (the default).
+
+如果将 ExitOnForwardFailure 配置选项设为“yes”，那么在 ForkAfterAuthentication 配置选项设为“yes”时启动的客户端将在所有远程端口转发成功建立后才会进入后台。此关键字的参数必须是“yes”（与 -f 选项相同）或“no”（默认值）。
 
 ### ForwardAgent
 
 Specifies whether the connection to the authentication agent (if any) will be forwarded to the remote machine. The argument may be yes, no (the default), an explicit path to an agent socket or the name of an environment variable (beginning with ‘$’) in which to find the path.
 
+指定是否将连接到身份验证代理（如果有的话）转发到远程机器。参数可以是“yes”、“no”（默认值）、代理套接字的明确路径或以“$”开头的环境变量名以找到路径。
+
 Agent forwarding should be enabled with caution. Users with the ability to bypass file permissions on the remote host (for the agent's Unix-domain socket) can access the local agent through the forwarded connection. An attacker cannot obtain key material from the agent, however they can perform operations on the keys that enable them to authenticate using the identities loaded into the agent.
 
+应谨慎启用代理转发。可以绕过远程主机上文件权限的用户（代理的Unix域套接字）能够通过转发连接访问本地代理。攻击者无法从代理中获取密钥材料，但可以对密钥执行操作，使他们能够使用加载到代理中的身份进行身份验证。
+
 ### ForwardX11
+
 Specifies whether X11 connections will be automatically redirected over the secure channel and DISPLAY set. The argument must be yes or no (the default).
+
+指定是否将 X11 连接自动重定向到安全通道，并设置 DISPLAY。参数必须是 "yes" 或 "no"（默认值）。
+
 X11 forwarding should be enabled with caution. Users with the ability to bypass file permissions on the remote host (for the user's X11 authorization database) can access the local X11 display through the forwarded connection. An attacker may then be able to perform activities such as keystroke monitoring if the ForwardX11Trusted option is also enabled.
 
+启用X11转发时应谨慎。能够绕过远程主机文件权限的用户（针对用户的X11授权数据库）可以通过转发连接访问本地X11显示。如果同时启用了ForwardX11Trusted选项，攻击者可能能够进行如击键监控等活动。
+
 ### ForwardX11Timeout
+
 Specify a timeout for untrusted X11 forwarding using the format described in the TIME FORMATS section of sshd_config(5). X11 connections received by ssh(1) after this time will be refused. Setting ForwardX11Timeout to zero will disable the timeout and permit X11 forwarding for the life of the connection. The default is to disable untrusted X11 forwarding after twenty minutes has elapsed.
 
 ### ForwardX11Trusted
+
 If this option is set to yes, remote X11 clients will have full access to the original X11 display.
+
 If this option is set to no (the default), remote X11 clients will be considered untrusted and prevented from stealing or tampering with data belonging to trusted X11 clients. Furthermore, the xauth(1) token used for the session will be set to expire after 20 minutes. Remote clients will be refused access after this time.
 
 See the X11 SECURITY extension specification for full details on the restrictions imposed on untrusted clients.
@@ -597,10 +654,13 @@ Specifies one or more files to use for the global host key database, separated b
 
 ### GSSAPIAuthentication
 Specifies whether user authentication based on GSSAPI is allowed. The default is no.
+
 ### GSSAPIDelegateCredentials
 Forward (delegate) credentials to the server. The default is no.
+
 ### HashKnownHosts
 Indicates that ssh(1) should hash host names and addresses when they are added to ~/.ssh/known_hosts. These hashed names may be used normally by ssh(1) and sshd(8), but they do not visually reveal identifying information if the file's contents are disclosed. The default is no. Note that existing names and addresses in known hosts files will not be converted automatically, but may be manually hashed using ssh-keygen(1).
+
 ### HostbasedAcceptedAlgorithms
 Specifies the signature algorithms that will be used for hostbased authentication as a comma-separated list of patterns. Alternately if the specified list begins with a ‘+’ character, then the specified signature algorithms will be appended to the default set instead of replacing them. If the specified list begins with a ‘-’ character, then the specified signature algorithms (including wildcards) will be removed from the default set instead of replacing them. If the specified list begins with a ‘^’ character, then the specified signature algorithms will be placed at the head of the default set. The default for this option is:
 ssh-ed25519-cert-v01@openssh.com,
@@ -620,6 +680,7 @@ The -Q option of ssh(1) may be used to list supported signature algorithms. This
 
 ### HostbasedAuthentication
 Specifies whether to try rhosts based authentication with public key authentication. The argument must be yes or no (the default).
+
 ### HostKeyAlgorithms
 Specifies the host key signature algorithms that the client wants to use in order of preference. Alternately if the specified list begins with a ‘+’ character, then the specified signature algorithms will be appended to the default set instead of replacing them. If the specified list begins with a ‘-’ character, then the specified signature algorithms (including wildcards) will be removed from the default set instead of replacing them. If the specified list begins with a ‘^’ character, then the specified signature algorithms will be placed at the head of the default set. The default for this option is:
 ssh-ed25519-cert-v01@openssh.com,
@@ -670,10 +731,13 @@ Include the specified configuration file(s). Multiple pathnames may be specified
 
 ### IPQoS
 Specifies the IPv4 type-of-service or DSCP class for connections. Accepted values are af11, af12, af13, af21, af22, af23, af31, af32, af33, af41, af42, af43, cs0, cs1, cs2, cs3, cs4, cs5, cs6, cs7, ef, le, lowdelay, throughput, reliability, a numeric value, or none to use the operating system default. This option may take one or two arguments, separated by whitespace. If one argument is specified, it is used as the packet class unconditionally. If two values are specified, the first is automatically selected for interactive sessions and the second for non-interactive sessions. The default is af21 (Low-Latency Data) for interactive sessions and cs1 (Lower Effort) for non-interactive sessions.
+
 ### KbdInteractiveAuthentication
 Specifies whether to use keyboard-interactive authentication. The argument to this keyword must be yes (the default) or no. ChallengeResponseAuthentication is a deprecated alias for this.
+
 ### KbdInteractiveDevices
 Specifies the list of methods to use in keyboard-interactive authentication. Multiple method names must be comma-separated. The default is to use the server specified list. The methods available vary depending on what the server supports. For an OpenSSH server, it may be zero or more of: bsdauth, pam, and skey.
+
 ### KexAlgorithms
 Specifies the permitted KEX (Key Exchange) algorithms that will be used and their preference order. The selected algorithm will be the first algorithm in this list that the server also supports. Multiple algorithms must be comma-separated.
 If the specified list begins with a ‘+’ character, then the specified algorithms will be appended to the default set instead of replacing them. If the specified list begins with a ‘-’ character, then the specified algorithms (including wildcards) will be removed from the default set instead of replacing them. If the specified list begins with a ‘^’ character, then the specified algorithms will be placed at the head of the default set.
@@ -692,6 +756,7 @@ The list of supported key exchange algorithms may also be obtained using "ssh -Q
 
 ### KnownHostsCommand
 Specifies a command to use to obtain a list of host keys, in addition to those listed in UserKnownHostsFile and GlobalKnownHostsFile. This command is executed after the files have been read. It may write host key lines to standard output in identical format to the usual files (described in the VERIFYING HOST KEYS section in ssh(1)). Arguments to KnownHostsCommand accept the tokens described in the TOKENS section. The command may be invoked multiple times per connection: once when preparing the preference list of host key algorithms to use, again to obtain the host key for the requested host name and, if CheckHostIP is enabled, one more time to obtain the host key matching the server's address. If the command exits abnormally or returns a non-zero exit status then the connection is terminated.
+
 ### LocalCommand
 Specifies a command to execute on the local machine after successfully connecting to the server. The command string extends to the end of the line, and is executed with the user's shell. Arguments to LocalCommand accept the tokens described in the TOKENS section.
 The command is run synchronously and does not have access to the session of the ssh(1) that spawned it. It should not be used for interactive commands.
@@ -704,6 +769,7 @@ IPv6 addresses can be specified by enclosing addresses in square brackets. Multi
 
 ### LogLevel
 Gives the verbosity level that is used when logging messages from ssh(1). The possible values are: QUIET, FATAL, ERROR, INFO, VERBOSE, DEBUG, DEBUG1, DEBUG2, and DEBUG3. The default is INFO. DEBUG and DEBUG1 are equivalent. DEBUG2 and DEBUG3 each specify higher levels of verbose output.
+
 ### LogVerbose
 Specify one or more overrides to LogLevel. An override consists of one or more pattern lists that matches the source file, function and line number to force detailed logging for. For example, an override pattern of:
 kex.c:*:1000,*:kex_exchange_identification():*,packet.c:*
@@ -724,14 +790,18 @@ The list of available MAC algorithms may also be obtained using "ssh -Q mac".
 
 ### NoHostAuthenticationForLocalhost
 Disable host authentication for localhost (loopback addresses). The argument to this keyword must be yes or no (the default).
+
 ### NumberOfPasswordPrompts
 Specifies the number of password prompts before giving up. The argument to this keyword must be an integer. The default is 3.
+
 ### ObscureKeystrokeTiming
 Specifies whether ssh(1) should try to obscure inter-keystroke timings from passive observers of network traffic. If enabled, then for interactive sessions, ssh(1) will send keystrokes at fixed intervals of a few tens of milliseconds and will send fake keystroke packets for some time after typing ceases. The argument to this keyword must be yes, no or an interval specifier of the form interval:milliseconds (e.g. interval:80 for 80 milliseconds). The default is to obscure keystrokes using a 20ms packet interval. Note that smaller intervals will result in higher fake keystroke packet rates.
+
 ### PasswordAuthentication
 Specifies whether to use password authentication. The argument to this keyword must be yes (the default) or no.
 PermitLocalCommand
 Allow local command execution via the LocalCommand option or using the !command escape sequence in ssh(1). The argument must be yes or no (the default).
+
 ### PermitRemoteOpen
 Specifies the destinations to which remote TCP port forwarding is permitted when RemoteForward is used as a SOCKS proxy. The forwarding specification must be one of the following forms:
 PermitRemoteOpen host:port
@@ -765,6 +835,7 @@ Note also that the configuration for the destination host (either supplied via t
 
 ### ProxyUseFdpass
 Specifies that ProxyCommand will pass a connected file descriptor back to ssh(1) instead of continuing to execute and pass data. The default is no.
+
 ### PubkeyAcceptedAlgorithms
 Specifies the signature algorithms that will be used for public key authentication as a comma-separated list of patterns. If the specified list begins with a ‘+’ character, then the algorithms after it will be appended to the default instead of replacing it. If the specified list begins with a ‘-’ character, then the specified algorithms (including wildcards) will be removed from the default set instead of replacing them. If the specified list begins with a ‘^’ character, then the specified algorithms will be placed at the head of the default set. The default for this option is:
 ssh-ed25519-cert-v01@openssh.com,
@@ -801,10 +872,13 @@ If the bind_address is not specified, the default is to only bind to loopback ad
 
 ### RequestTTY
 Specifies whether to request a pseudo-tty for the session. The argument may be one of: no (never request a TTY), yes (always request a TTY when standard input is a TTY), force (always request a TTY) or auto (request a TTY when opening a login session). This option mirrors the -t and -T flags for ssh(1).
+
 ### RequiredRSASize
 Specifies the minimum RSA key size (in bits) that ssh(1) will accept. User authentication keys smaller than this limit will be ignored. Servers that present host keys smaller than this limit will cause the connection to be terminated. The default is 1024 bits. Note that this limit may only be raised from the default.
+
 ### RevokedHostKeys
 Specifies revoked host public keys. Keys listed in this file will be refused for host authentication. Note that if this file does not exist or is not readable, then host authentication will be refused for all hosts. Keys may be specified as a text file, listing one public key per line, or as an OpenSSH Key Revocation List (KRL) as generated by ssh-keygen(1). For more information on KRLs, see the KEY REVOCATION LISTS section in ssh-keygen(1). Arguments to RevokedHostKeys may use the tilde syntax to refer to a user's home directory, the tokens described in the TOKENS section and environment variables as described in the ENVIRONMENT VARIABLES section.
+
 ### SecurityKeyProvider
 Specifies a path to a library that will be used when loading any FIDO authenticator-hosted keys, overriding the default of using the built-in USB HID support.
 If the specified value begins with a ‘$’ character, then it will be treated as an environment variable containing the path to the library.
@@ -821,12 +895,16 @@ The default value is 3. If, for example, ServerAliveInterval (see below) is set 
 
 ### ServerAliveInterval
 Sets a timeout interval in seconds after which if no data has been received from the server, ssh(1) will send a message through the encrypted channel to request a response from the server. The default is 0, indicating that these messages will not be sent to the server.
+
 ### SessionType
 May be used to either request invocation of a subsystem on the remote system, or to prevent the execution of a remote command at all. The latter is useful for just forwarding ports. The argument to this keyword must be none (same as the -N option), subsystem (same as the -s option) or default (shell or command execution).
+
 ### SetEnv
 Directly specify one or more environment variables and their contents to be sent to the server. Similarly to SendEnv, with the exception of the TERM variable, the server must be prepared to accept the environment variable.
+
 ### StdinNull
 Redirects stdin from /dev/null (actually, prevents reading from stdin). Either this or the equivalent -n option must be used when ssh is run in the background. The argument to this keyword must be yes (same as the -n option) or no (the default).
+
 ### StreamLocalBindMask
 Sets the octal file creation mode mask (umask) used when creating a Unix-domain socket file for local or remote port forwarding. This option is only used for port forwarding to a Unix-domain socket file.
 The default value is 0177, which creates a Unix-domain socket file that is readable and writable only by the owner. Note that not all operating systems honor the file mode on Unix-domain socket files.
@@ -841,7 +919,8 @@ If this flag is set to accept-new then ssh will automatically add new host keys 
 
 ### SyslogFacility
 Gives the facility code that is used when logging messages from ssh(1). The possible values are: DAEMON, USER, AUTH, LOCAL0, LOCAL1, LOCAL2, LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7. The default is USER.
-TCPKeepAlive
+
+### TCPKeepAlive
 Specifies whether the system should send TCP keepalive messages to the other side. If they are sent, death of the connection or crash of one of the machines will be properly noticed. However, this means that connections will die if the route is down temporarily, and some people find it annoying.
 The default is yes (to send TCP keepalive messages), and the client will notice if the network goes down or the remote host dies. This is important in scripts, and many users want it too.
 
@@ -849,8 +928,10 @@ To disable TCP keepalive messages, the value should be set to no. See also Serve
 
 ### Tag
 Specify a configuration tag name that may be later used by a Match directive to select a block of configuration.
+
 ### Tunnel
 Request tun(4) device forwarding between the client and the server. The argument must be yes, point-to-point (layer 3), ethernet (layer 2), or no (the default). Specifying yes requests the default tunnel mode, which is point-to-point.
+
 ### TunnelDevice
 Specifies the tun(4) devices to open on the client (local_tun) and the server (remote_tun).
 The argument must be local_tun[:remote_tun]. The devices may be specified by numerical ID or the keyword any, which uses the next available tunnel device. If remote_tun is not specified, it defaults to any. The default is any:any.
@@ -867,15 +948,18 @@ Presently, only sshd(8) from OpenSSH 6.8 and greater support the "hostkeys@opens
 
 ### User
 Specifies the user to log in as. This can be useful when a different user name is used on different machines. This saves the trouble of having to remember to give the user name on the command line.
-UserKnownHostsFile
+
+### UserKnownHostsFile
 Specifies one or more files to use for the user host key database, separated by whitespace. Each filename may use tilde notation to refer to the user's home directory, the tokens described in the TOKENS section and environment variables as described in the ENVIRONMENT VARIABLES section. A value of none causes ssh(1) to ignore any user-specific known hosts files. The default is ~/.ssh/known_hosts, ~/.ssh/known_hosts2.
+
 ### VerifyHostKeyDNS
 Specifies whether to verify the remote key using DNS and SSHFP resource records. If this option is set to yes, the client will implicitly trust keys that match a secure fingerprint from DNS. Insecure fingerprints will be handled as if this option was set to ask. If this option is set to ask, information on fingerprint match will be displayed, but the user will still need to confirm new host keys according to the StrictHostKeyChecking option. The default is no.
 See also VERIFYING HOST KEYS in ssh(1).
 
 ### VisualHostKey
 If this flag is set to yes, an ASCII art representation of the remote host key fingerprint is printed in addition to the fingerprint string at login and for unknown host keys. If this flag is set to no (the default), no fingerprint strings are printed at login and only the fingerprint string will be printed for unknown host keys.
-XAuthLocation
+
+### XAuthLocation
 Specifies the full pathname of the xauth(1) program. The default is /usr/X11R6/bin/xauth.
 
 ## 模式（PATTERNS）

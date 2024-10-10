@@ -1,12 +1,22 @@
 # ssh基础命令
 
+## 配置确认
+```bash
+sshd -T # 当前服务端配置
+ssh -Q [parameter] # 检查当前客户端的配置，需要指定参数
+```
+
 ## 连接远程主机
 ```
 ssh user@hostname 
 
 ssh user@hostname -p port
 ```
-
+## ssh连接数查询
+```bash
+netstat -tnpa | grep 'ESTABLISHED.*sshd'
+netstat -tnpa | grep :22
+```
 
 ## 概要
 ```
