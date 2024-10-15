@@ -638,85 +638,141 @@ X11 forwarding should be enabled with caution. Users with the ability to bypass 
 
 Specify a timeout for untrusted X11 forwarding using the format described in the TIME FORMATS section of sshd_config(5). X11 connections received by ssh(1) after this time will be refused. Setting ForwardX11Timeout to zero will disable the timeout and permit X11 forwarding for the life of the connection. The default is to disable untrusted X11 forwarding after twenty minutes has elapsed.
 
+为不受信任的 X11 转发指定超时时间，使用 sshd_config 的时间格式描述。ssh(1) 接收到的 X11 连接在此时间之后将被拒绝。将 ForwardX11Timeout 设置为零将禁用超时，并允许在连接期间进行 X11 转发。默认情况下，二十分钟后禁用不受信任的 X11 转发。
+
 ### ForwardX11Trusted
 
 If this option is set to yes, remote X11 clients will have full access to the original X11 display.
 
+如果此选项设置为yes，远程X11客户端将对原始X11显示器有完全访问权限。
+
 If this option is set to no (the default), remote X11 clients will be considered untrusted and prevented from stealing or tampering with data belonging to trusted X11 clients. Furthermore, the xauth(1) token used for the session will be set to expire after 20 minutes. Remote clients will be refused access after this time.
+
+如果该选项设置为“no”（默认），远程 X11 客户端将被视为不受信任，无法窃取或篡改受信任 X11 客户端的数据。此外，session 使用的 xauth 令牌将在 20 分钟后过期。届时将拒绝远程客户端的访问。
 
 See the X11 SECURITY extension specification for full details on the restrictions imposed on untrusted clients.
 
+有关对不受信任客户端施加的限制的详细信息，请参阅 X11 SECURITY 扩展规范。
+
 ### GatewayPorts
+
 Specifies whether remote hosts are allowed to connect to local forwarded ports. By default, ssh(1) binds local port forwardings to the loopback address. This prevents other remote hosts from connecting to forwarded ports. GatewayPorts can be used to specify that ssh should bind local port forwardings to the wildcard address, thus allowing remote hosts to connect to forwarded ports. The argument must be yes or no (the default).
 
+指定是否允许远程主机连接到本地转发的端口。默认情况下，ssh将本地端口转发绑定到回环地址，这阻止其他远程主机连接到转发的端口。可以使用GatewayPorts指定ssh应将本地端口转发绑定到通配符地址，从而允许远程主机连接到转发的端口。参数必须是yes或no（默认值）。
+
 ### GlobalKnownHostsFile
+
 Specifies one or more files to use for the global host key database, separated by whitespace. The default is /etc/ssh/ssh_known_hosts, /etc/ssh/ssh_known_hosts2.
 
+指定一个或多个文件作全局主机密钥数据库，文件名以空格分隔。默认值为/etc/ssh/ssh_known_hosts和/etc/ssh/ssh_known_hosts2。
+
 ### GSSAPIAuthentication
+
 Specifies whether user authentication based on GSSAPI is allowed. The default is no.
 
+指定是否允许基于GSSAPI的用户认证。默认值为no。
+
+#### GSSAPI
+GSSAPI（通用安全服务应用程序编程接口）是一种用于在网络应用程序中提供安全认证和通信的标准接口。它通过抽象具体的安全机制，使应用程序能够使用多种认证方法，而无需了解底层的实现细节。GSSAPI常用于支持如Kerberos这样的身份验证协议，确保数据的完整性和保密性。
+
 ### GSSAPIDelegateCredentials
+
 Forward (delegate) credentials to the server. The default is no.
 
+将凭证转发（委托）到服务器。默认值为no。
+
 ### HashKnownHosts
+
 Indicates that ssh(1) should hash host names and addresses when they are added to ~/.ssh/known_hosts. These hashed names may be used normally by ssh(1) and sshd(8), but they do not visually reveal identifying information if the file's contents are disclosed. The default is no. Note that existing names and addresses in known hosts files will not be converted automatically, but may be manually hashed using ssh-keygen(1).
 
+表示在添加到 ~/.ssh/known_hosts 文件时，ssh 应对主机名和地址进行哈希处理。ssh 和 sshd 可以正常使用这些哈希后的名称，但如果文件内容泄露，它们不会透露识别信息。默认值为 no。注意，已存在于 known_hosts 文件中的名称和地址不会自动转换，但可以使用 ssh-keygen 手动哈希。
+
 ### HostbasedAcceptedAlgorithms
+
 Specifies the signature algorithms that will be used for hostbased authentication as a comma-separated list of patterns. Alternately if the specified list begins with a ‘+’ character, then the specified signature algorithms will be appended to the default set instead of replacing them. If the specified list begins with a ‘-’ character, then the specified signature algorithms (including wildcards) will be removed from the default set instead of replacing them. If the specified list begins with a ‘^’ character, then the specified signature algorithms will be placed at the head of the default set. The default for this option is:
-ssh-ed25519-cert-v01@openssh.com,
-ecdsa-sha2-nistp256-cert-v01@openssh.com,
-ecdsa-sha2-nistp384-cert-v01@openssh.com,
-ecdsa-sha2-nistp521-cert-v01@openssh.com,
-sk-ssh-ed25519-cert-v01@openssh.com,
-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com,
-rsa-sha2-512-cert-v01@openssh.com,
-rsa-sha2-256-cert-v01@openssh.com,
-ssh-ed25519,
-ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
-sk-ssh-ed25519@openssh.com,
-sk-ecdsa-sha2-nistp256@openssh.com,
-rsa-sha2-512,rsa-sha2-256
+
+指定用于基于主机身份验证的签名算法，以逗号分隔的模式列表表示。或者，如果指定列表以‘+’字符开始，那么指定的签名算法将被添加到默认集合中，而不是替换它们。如果指定列表以‘-’字符开始，那么指定的签名算法（包括通配符）将从默认集合中移除，而不是替换它们。如果指定列表以‘^’字符开始，那么指定的签名算法将放在默认集合的前面。此选项的默认设置为：
+
+- ssh-ed25519-cert-v01@openssh.com,
+- ecdsa-sha2-nistp256-cert-v01@openssh.com,
+- ecdsa-sha2-nistp384-cert-v01@openssh.com,
+- ecdsa-sha2-nistp521-cert-v01@openssh.com,
+- sk-ssh-ed25519-cert-v01@openssh.com,
+- sk-ecdsa-sha2-nistp256-cert-v01@openssh.com,
+- rsa-sha2-512-cert-v01@openssh.com,
+- rsa-sha2-256-cert-v01@openssh.com,
+- ssh-ed25519,
+- ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
+- sk-ssh-ed25519@openssh.com,
+- sk-ecdsa-sha2-nistp256@openssh.com,
+- rsa-sha2-512,rsa-sha2-256
+
 The -Q option of ssh(1) may be used to list supported signature algorithms. This was formerly named HostbasedKeyTypes.
 
+可以使用 ssh 的 -Q 选项列出支持的签名算法。之前这个选项称为 HostbasedKeyTypes。
+
 ### HostbasedAuthentication
+
 Specifies whether to try rhosts based authentication with public key authentication. The argument must be yes or no (the default).
 
+指定是否尝试使用公钥认证进行rhosts基础认证。参数必须为yes或no（默认）。
+
 ### HostKeyAlgorithms
+
 Specifies the host key signature algorithms that the client wants to use in order of preference. Alternately if the specified list begins with a ‘+’ character, then the specified signature algorithms will be appended to the default set instead of replacing them. If the specified list begins with a ‘-’ character, then the specified signature algorithms (including wildcards) will be removed from the default set instead of replacing them. If the specified list begins with a ‘^’ character, then the specified signature algorithms will be placed at the head of the default set. The default for this option is:
-ssh-ed25519-cert-v01@openssh.com,
-ecdsa-sha2-nistp256-cert-v01@openssh.com,
-ecdsa-sha2-nistp384-cert-v01@openssh.com,
-ecdsa-sha2-nistp521-cert-v01@openssh.com,
-sk-ssh-ed25519-cert-v01@openssh.com,
-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com,
-rsa-sha2-512-cert-v01@openssh.com,
-rsa-sha2-256-cert-v01@openssh.com,
-ssh-ed25519,
-ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
-sk-ecdsa-sha2-nistp256@openssh.com,
-sk-ssh-ed25519@openssh.com,
-rsa-sha2-512,rsa-sha2-256
+
+指定客户端优先使用的主机密钥签名算法的顺序。或者，如果指定列表以‘+’字符开头，则指定的签名算法将附加到默认集合，而不是替换它们。如果指定列表以‘-’字符开头，则指定的签名算法（包括通配符）将从默认集合中移除，而不是替换它们。如果指定列表以‘^’字符开头，则指定的签名算法将置于默认集合的开头。该选项的默认值为：
+
+- ssh-ed25519-cert-v01@openssh.com,
+- ecdsa-sha2-nistp256-cert-v01@openssh.com,
+- ecdsa-sha2-nistp384-cert-v01@openssh.com,
+- ecdsa-sha2-nistp521-cert-v01@openssh.com,
+- sk-ssh-ed25519-cert-v01@openssh.com,
+- sk-ecdsa-sha2-nistp256-cert-v01@openssh.com,
+- rsa-sha2-512-cert-v01@openssh.com,
+- rsa-sha2-256-cert-v01@openssh.com,
+- ssh-ed25519,
+- ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
+- sk-ecdsa-sha2-nistp256@openssh.com,
+- sk-ssh-ed25519@openssh.com,
+- rsa-sha2-512,rsa-sha2-256
+
 If hostkeys are known for the destination host then this default is modified to prefer their algorithms.
+
+如果已知目标主机的主机密钥，则默认设置会修改为优先使用这些算法。
 
 The list of available signature algorithms may also be obtained using "ssh -Q HostKeyAlgorithms".
 
+可用签名算法列表也可以通过"ssh -Q HostKeyAlgorithms"获取。
+
 ### HostKeyAlias
+
 Specifies an alias that should be used instead of the real host name when looking up or saving the host key in the host key database files and when validating host certificates. This option is useful for tunneling SSH connections or for multiple servers running on a single host.
 
+指定一个别名，用于在查找或保存主机密钥至主机密钥数据库文件以及验证主机证书时代替实际主机名。该选项对于SSH连接的隧道或单个主机上运行的多个服务器非常有用。
+
 ### Hostname
+
 Specifies the real host name to log into. This can be used to specify nicknames or abbreviations for hosts. Arguments to Hostname accept the tokens described in the TOKENS section. Numeric IP addresses are also permitted (both on the command line and in Hostname specifications). The default is the name given on the command line.
 
+指定要登录的实际主机名。可用于指定主机的昵称或缩写。Hostname 的参数接受 [TOKENS](#token) 部分中描述的标记。数字IP地址也允许用于命令行和主机名规范。默认值为命令行中给出的名称。
+
 ### IdentitiesOnly
+
 Specifies that ssh(1) should only use the configured authentication identity and certificate files (either the default files, or those explicitly configured in the ssh_config files or passed on the ssh(1) command-line), even if ssh-agent(1) or a PKCS11Provider or SecurityKeyProvider offers more identities. The argument to this keyword must be yes or no (the default). This option is intended for situations where ssh-agent offers many different identities.
+
+指定ssh只使用配置的认证身份和证书文件（默认文件或在ssh_config文件中显式配置的文件，或在ssh命令行传递的文件），即使ssh-agent或PKCS11Provider或SecurityKeyProvider提供更多身份。此关键词的参数必须是yes或no（默认）。此选项适用于ssh-agent提供多种身份的情况。
 
 ### IdentityAgent
 Specifies the UNIX-domain socket used to communicate with the authentication agent.
+
 This option overrides the SSH_AUTH_SOCK environment variable and can be used to select a specific agent. Setting the socket name to none disables the use of an authentication agent. If the string "SSH_AUTH_SOCK" is specified, the location of the socket will be read from the SSH_AUTH_SOCK environment variable. Otherwise if the specified value begins with a ‘$’ character, then it will be treated as an environment variable containing the location of the socket.
 
 Arguments to IdentityAgent may use the tilde syntax to refer to a user's home directory, the tokens described in the TOKENS section and environment variables as described in the ENVIRONMENT VARIABLES section.
 
 ### IdentityFile
 Specifies a file from which the user's ECDSA, authenticator-hosted ECDSA, Ed25519, authenticator-hosted Ed25519 or RSA authentication identity is read. You can also specify a public key file to use the corresponding private key that is loaded in ssh-agent(1) when the private key file is not present locally. The default is ~/.ssh/id_rsa, ~/.ssh/id_ecdsa, ~/.ssh/id_ecdsa_sk, ~/.ssh/id_ed25519 and ~/.ssh/id_ed25519_sk. Additionally, any identities represented by the authentication agent will be used for authentication unless IdentitiesOnly is set. If no certificates have been explicitly specified by CertificateFile, ssh(1) will try to load certificate information from the filename obtained by appending -cert.pub to the path of a specified IdentityFile.
+
 Arguments to IdentityFile may use the tilde syntax to refer to a user's home directory or the tokens described in the TOKENS section. Alternately an argument of none may be used to indicate no identity files should be loaded.
 
 It is possible to have multiple identity files specified in configuration files; all these identities will be tried in sequence. Multiple IdentityFile directives will add to the list of identities tried (this behaviour differs from that of other configuration directives).
@@ -965,3 +1021,5 @@ Specifies the full pathname of the xauth(1) program. The default is /usr/X11R6/b
 ## 模式（PATTERNS）
 
 ## TOKEN
+
+
