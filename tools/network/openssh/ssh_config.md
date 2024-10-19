@@ -1,6 +1,8 @@
 # ssh_config 配置文件
 OpenSSH客户端配置文件
 
+参考[ssh_config](https://man.openbsd.org/ssh_config)
+
 ## ssh按下列顺序从以下来源获取配置数据
 1. 命令行选项
 2. 用户的配置文件 (~/.ssh/config)
